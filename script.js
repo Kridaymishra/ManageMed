@@ -1,70 +1,102 @@
-// Mock Inventory Data
-const inventoryData = [
-    {
-        id: 1,
-        medicineName: "Paracetamol",
-        quantity: 150,
-        expiryDate: new Date("2024-01-30"),
-        value: 2250,
-        status: "expired"
-    },
-    {
-        id: 2,
-        medicineName: "Amoxicillin",
-        quantity: 80,
-        expiryDate: new Date("2024-02-15"),
-        value: 4800,
-        status: "expired"
-    },
-    {
-        id: 3,
-        medicineName: "Ibuprofen",
-        quantity: 200,
-        expiryDate: new Date("2024-03-10"),
-        value: 6000,
-        status: "warning"
-    },
-    {
-        id: 4,
-        medicineName: "Aspirin",
-        quantity: 120,
-        expiryDate: new Date("2024-04-20"),
-        value: 1800,
-        status: "warning"
-    },
-    {
-        id: 5,
-        medicineName: "Cetirizine",
-        quantity: 90,
-        expiryDate: new Date("2024-05-15"),
-        value: 3150,
-        status: "warning"
-    },
-    {
-        id: 6,
-        medicineName: "Omeprazole",
-        quantity: 60,
-        expiryDate: new Date("2024-08-30"),
-        value: 4200,
-        status: "safe"
-    },
-    {
-        id: 7,
-        medicineName: "Metformin",
-        quantity: 180,
-        expiryDate: new Date("2024-09-15"),
-        value: 5400,
-        status: "safe"
-    },
-    {
-        id: 8,
-        medicineName: "Lisinopril",
-        quantity: 75,
-        expiryDate: new Date("2024-10-20"),
-        value: 3750,
-        status: "safe"
+// --- SUPABASE CONNECTION ---
+// Paste your ACTUAL URL and KEY here (from the Supabase website)
+const supabaseUrl = 'https://YOUR_PROJECT_URL.supabase.co'; 
+const supabaseKey = 'YOUR_LONG_ANON_KEY_HERE';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+let inventoryData = []; // Starts empty, fills from database
+
+// 1. Check Login & Load Data
+async function initializeApp() {
+    // Check if user is logged in
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    // If on dashboard but not logged in -> Go to login
+    if (window.location.pathname.includes('dashboard.html') && !session) {
+        window.location.href = 'login.html';
+        return;
     }
-];
+
+    // If logged in, load their data
+    if (session && window.location.pathname.includes('dashboard.html')) {
+        loadUserProfile(session.user.id);
+        await fetchInventory(session.user.id);
+    }
+    
+    // Initialize other page animations
+    if (window.location.pathname.includes('index.html')) {
+        initializeLandingPage();
+    }
+}
+
+// 2. Fetch Real Inventory from Supabase
+async function fetchInventory(userId) {
+    const { data, error } = await supabase
+        .from('inventory')
+        .select('*')
+        .eq('user_id', userId); // Only get THIS user's items
+
+    if (error) {
+        console.error('Error fetching data:', error);
+    } else {
+        // Convert Database format to your App format
+        inventoryData = data.map(item => ({
+            id: item.id,
+            medicineName: item.name,
+            quantity: item.quantity,
+            expiryDate: new Date(item.expiry_date),
+            value: item.unit_price * item.quantity,
+            status: getMedicineStatus(new Date(item.expiry_date))
+        }));
+        
+        // Update the UI
+        renderInventoryTable();
+        updateStats();
+        initializeCharts();
+    }
+}
+
+// 3. Add New Medicine (Connects to "Add Medicine" Modal)
+async function addNewMedicine() {
+    const name = document.getElementById('medicineName').value;
+    const quantity = parseInt(document.getElementById('medicineQuantity').value);
+    const price = parseFloat(document.getElementById('medicinePrice').value);
+    const expiryDate = document.getElementById('medicineExpiry').value;
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { error } = await supabase
+        .from('inventory')
+        .insert([{
+            name: name,
+            quantity: quantity,
+            unit_price: price,
+            expiry_date: expiryDate,
+            user_id: user.id
+        }]);
+
+    if (error) {
+        alert("Error adding: " + error.message);
+    } else {
+        await fetchInventory(user.id); // Refresh list
+        closeAddMedicineModal();
+        alert(`${name} added!`);
+    }
+}
+
+// Helper to load profile name
+async function loadUserProfile(userId) {
+    const { data } = await supabase
+        .from('profiles')
+        .select('owner_name')
+        .eq('id', userId)
+        .single();
+        
+    if (data) {
+        document.getElementById('userName').textContent = data.owner_name;
+        document.getElementById('greetingName').textContent = data.owner_name.split(' ')[0];
+    }
+}
 
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
