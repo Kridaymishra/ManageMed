@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Pharmacy Expiry Manager</title>
+    <style>
+        :root {
+            --bg-primary: #0d1f1f;
+            --neon-teal: #2dd4bf;
+            --medical-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --emergency-red: #ef4444;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background blobs */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--neon-teal), var(--medical-green));
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob2 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--warning-yellow), var(--neon-teal));
+            bottom: -50px;
+            right: -50px;
+            animation-delay: 5s;
+        }
+
+        .blob3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, var(--emergency-red), var(--warning-yellow));
+            top: 50%;
+            left: 50%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Login Screen Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--neon-teal), var(--medical-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-teal);
+            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--neon-teal);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            background: #26b5a0;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(45, 212, 191, 0.3);
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome-text {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .date-text {
+            color: var(--text-secondary);
+        }
+
+        .financial-widget {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .financial-item {
+            text-align: center;
+        }
+
+        .financial-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .financial-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .financial-value.loss {
+            color: var(--emergency-red);
+        }
+
+        .financial-value.recoverable {
+            color: var(--warning-yellow);
+        }
+
+        .inventory-section {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--neon-teal);
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .inventory-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid var(--glass-border);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .inventory-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-safe {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--medical-green);
+            border: 1px solid var(--medical-green);
+        }
+
+        .status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning-yellow);
+            border: 1px solid var(--warning-yellow);
+        }
+
+        .status-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--emergency-red);
+            border: 1px solid var(--emergency-red);
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.return {
+            background: var(--emergency-red);
+            color: white;
+        }
+
+        .action-btn.sale {
+            background: var(--warning-yellow);
+            color: var(--bg-primary);
+        }
+
+        .action-btn.track {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            color: var(--emergency-red);
+            border-color: var(--emergency-red);
+        }
+
+        @media (max-width: 768px) {
+            .financial-widget {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .inventory-table {
+                font-size: 14px;
+            }
+            
+            .inventory-table th,
+            .inventory-table td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-blob blob1"></div>
+    <div class="bg-blob blob2"></div>
+    <div class="bg-blob blob3"></div>
+
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-card">
+            <h1 class="login-title">Smart Pharmacy Manager</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="pharmacyId">Pharmacy ID</label>
+                    <input type="text" id="pharmacyId" class="form-input" placeholder="Enter your Pharmacy ID" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Access Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div class="dashboard" id="dashboardScreen">
+        <div class="header">
+            <div>
+                <div class="welcome-text">Welcome to Smart Pharmacy Manager</div>
+                <div class="date-text" id="currentDate"></div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <div class="financial-widget">
+            <div class="financial-item">
+                <div class="financial-label">Total Loss from Expired Stock</div>
+                <div class="financial-value loss" id="totalLoss">$0</div>
+            </div>
+            <div class="financial-item">
+                <div class="financial-label">Recoverable Revenue (Flash Sale)</div>
+                <div class="financial-value recoverable" id="recoverableRevenue">$0</div>
+            </div>
+        </div>
+
+        <div class="inventory-section">
+            <h2 class="section-title">Inventory Status & Actions</h2>
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Drug Name</th>
+                        <th>Batch ID</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Mock inventory data
+        const inventory = [
+            {
+                id: 1,
+                drugName: "Amoxicillin",
+                batchId: "B001",
+                quantity: 150,
+                unitPrice: 12.50,
+                expiryDate: new Date("2024-01-15")
+            },
+            {
+                id: 2,
+                drugName: "Ibuprofen",
+                batchId: "B002",
+                quantity: 200,
+                unitPrice: 8.75,
+                expiryDate: new Date("2025-03-20")
+            },
+            {
+                id: 3,
+                drugName: "Paracetamol",
+                batchId: "B003",
+                quantity: 300,
+                unitPrice: 5.25,
+                expiryDate: new Date("2024-12-10")
+            },
+            {
+                id: 4,
+                drugName: "Aspirin",
+                batchId: "B004",
+                quantity: 100,
+                unitPrice: 7.80,
+                expiryDate: new Date("2025-06-15")
+            },
+            {
+                id: 5,
+                drugName: "Cetirizine",
+                batchId: "B005",
+                quantity: 80,
+                unitPrice: 15.60,
+                expiryDate: new Date("2024-02-28")
+            },
+            {
+                id: 6,
+                drugName: "Omeprazole",
+                batchId: "B006",
+                quantity: 120,
+                unitPrice: 22.40,
+                expiryDate: new Date("2025-08-30")
+            }
+        ];
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pharmacyId = document.getElementById('pharmacyId').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation (in real app, this would be server-side)
+            if (pharmacyId && password) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboardScreen').style.display = 'block';
+                initializeDashboard();
+            }
+        });
+
+        function logout() {
+            document.getElementById('dashboardScreen').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginForm').reset();
+        }
+
+        function initializeDashboard() {
+            updateCurrentDate();
+            renderInventory();
+            calculateFinancials();
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        function getStockStatus(expiryDate) {
+            const today = new Date();
+            const daysUntilExpiry = Math.floor((expiryDate - today) / (1000 * 60 * 60 * 24));
+            
+            if (daysUntilExpiry < 0) {
+                return { status: 'danger', label: 'Expired', days: daysUntilExpiry };
+            } else if (daysUntilExpiry <= 30) {
+                return { status: 'warning', label: 'Expiring Soon', days: daysUntilExpiry };
+            } else {
+                return { status: 'safe', label: 'Safe', days: daysUntilExpiry };
+            }
+        }
+
+        function renderInventory() {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+            
+            inventory.forEach(item => {
+                const stockStatus = getStockStatus(item.expiryDate);
+                const row = document.createElement('tr');
+                
+                const actionButton = getActionButton(stockStatus.status, item);
+                
+                row.innerHTML = `
+                    <td><strong>${item.drugName}</strong></td>
+                    <td>${item.batchId}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${item.unitPrice.toFixed(2)}</td>
+                    <td>${item.expiryDate.toLocaleDateString()}</td>
+                    <td><span class="status-badge status-${stockStatus.status}">${stockStatus.label}</span></td>
+                    <td>${actionButton}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function getActionButton(status, item) {
+            switch(status) {
+                case 'danger':
+                    return `<button class="action-btn return" onclick="handleAction('return', ${item.id})">Return to Vendor</button>`;
+                case 'warning':
+                    return `<button class="action-btn sale" onclick="handleAction('sale', ${item.id})">Start Flash Sale</button>`;
+                case 'safe':
+                default:
+                    return `<button class="action-btn track" disabled>Track</button>`;
+            }
+        }
+
+        function handleAction(action, itemId) {
+            const item = inventory.find(i => i.id === itemId);
+            if (!item) return;
+            
+            let message = '';
+            switch(action) {
+                case 'return':
+                    message = `Initiating return process for ${item.drugName} (Batch: ${item.batchId}) to vendor.`;
+                    break;
+                case 'sale':
+                    message = `Starting 50% flash sale for ${item.drugName} (Batch: ${item.batchId}) - ${item.quantity} units available!`;
+                    break;
+            }
+            
+            // Create a simple notification instead of alert
+            showNotification(message);
+        }
+
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--neon-teal);
+                color: var(--bg-primary);
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+                z-index: 1000;
+                max-width: 300px;
+                font-weight: bold;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function calculateFinancials() {
+            const today = new Date();
+            let totalLoss = 0;
+            let recoverableRevenue = 0;
+            
+            inventory.forEach(item => {
+                const stockStatus = getStockStatus(item.expiryDate);
+                const itemValue = item.quantity * item.unitPrice;
+                
+                if (stockStatus.status === 'danger') {
+                    totalLoss += itemValue;
+                } else if (stockStatus.status === 'warning') {
+                    // 50% of value can be recovered through flash sale
+                    recoverableRevenue += (itemValue * 0.5);
+                }
+            });
+            
+            document.getElementById('totalLoss').textContent = `$${totalLoss.toFixed(2)}`;
+            document.getElementById('recoverableRevenue').textContent = `$${recoverableRevenue.toFixed(2)}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ManageMed</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-container">
+        <div class="gradient-orb orb1"></div>
+        <div class="gradient-orb orb2"></div>
+        <div class="gradient-orb orb3"></div>
+        <div class="grid-pattern"></div>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    <img src="https://picsum.photos/seed/pharmacy/100/100.jpg" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <h3 id="userName">Guest User</h3>
+                    <p>Pharmacy Manager</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="charts">
+                    <span class="nav-icon">📈</span>
+                    <span>Charts</span>
+                </a>
+                <a href="#" class="nav-item" data-section="calculator">
+                    <span class="nav-icon">₹</span>
+                    <span>Financial Calculator</span>
+                </a>
+                <a href="#" class="nav-item" data-section="inventory">
+                    <span class="nav-icon">📦</span>
+                    <span>Inventory Table</span>
+                </a>
+                <a href="#" class="nav-item" data-section="ai">
+                    <span class="nav-icon">🤖</span>
+                    <span>AI Integration</span>
+                </a>
+            </nav>
+
+            <div class="logout-section">
+                <a href="index.html" class="logout-btn">
+                    <span class="nav-icon">🚪</span>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Greeting Section -->
+            <header class="greeting-section">
+                <h1>Hello, <span id="greetingName">Guest</span> 👋</h1>
+                <p>Here's your pharmacy overview for today</p>
+            </header>
+
+            <!-- Quick Stats Cards -->
+            <section class="stats-section">
+                <div class="stat-card expired">
+                    <div class="stat-icon">🚨</div>
+                    <div class="stat-content">
+                        <h3>Expired Stock</h3>
+                        <p class="stat-value">12 items</p>
+                    </div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-content">
+                        <h3>Expiring Soon</h3>
+                        <p class="stat-value">28 items</p>
+                    </div>
+                </div>
+
+                <div class="stat-card safe">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <h3>Safe Stock</h3>
+                        <p class="stat-value">156 items</p>
+                    </div>
+                </div>
+
+                <div class="stat-card financial">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <h3>Total Loss</h3>
+                        <p class="stat-value">₹45,280</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Sections -->
+            <div class="content-sections">
+                <!-- Dashboard Section -->
+                <section class="content-section active" id="dashboard-section">
+                    <div class="section-card">
+                        <h2>Quick Overview</h2>
+                        <div class="overview-grid">
+                            <div class="overview-item">
+                                <h4>Today's Alerts</h4>
+                                <p>3 medicines expiring today</p>
+                            </div>
+                            <div class="overview-item">
+                                <h4>Revenue at Risk</h4>
+                                <p>₹12,450 this month</p>
+                            </div>
+                            <div class="overview-item">
+                                <h4>Recovery Potential</h4>
+                                <p>₹8,230 via flash sales</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Charts Section -->
+                <section class="content-section" id="charts-section">
+                    <div class="section-card">
+                        <h2>Analytics Dashboard</h2>
+                        <div class="charts-grid">
+                            <div class="chart-container">
+                                <h3>Stock Status Distribution</h3>
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h3>Monthly Loss Trend</h3>
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Financial Calculator Section -->
+                <section class="content-section" id="calculator-section">
+                    <div class="section-card">
+                        <h2>Financial Calculator</h2>
+                        <div class="calculator-content">
+                            <div class="calc-item">
+                                <label>Total Expired Value:</label>
+                                <span class="calc-value loss">₹45,280</span>
+                            </div>
+                            <div class="calc-item">
+                                <label>Potential Flash Sale Revenue:</label>
+                                <span class="calc-value recoverable">₹22,640</span>
+                            </div>
+                            <div class="calc-item">
+                                <label>Net Loss After Recovery:</label>
+                                <span class="calc-value net-loss">₹22,640</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Inventory Table Section -->
+                <section class="content-section" id="inventory-section">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h2>Inventory Management</h2>
+                            <button class="add-medicine-btn" onclick="openAddMedicineModal()">
+                                <span>+ Add Medicine</span>
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="inventory-table">
+                                <thead>
+                                    <tr>
+                                        <th>Medicine Name</th>
+                                        <th>Quantity</th>
+                                        <th>Expiry Date</th>
+                                        <th>Value</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                        <th>Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-tbody">
+                                    <!-- Dynamic content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- AI Integration Section -->
+                <section class="content-section" id="ai-section">
+                    <div class="section-card">
+                        <h2>AI Recommendations</h2>
+                        <div class="ai-chat">
+                            <div class="ai-message">
+                                <div class="ai-avatar">🤖</div>
+                                <div class="message-content">
+                                    <p>Flash sale recommended for Paracetamol (expiring in 7 days)</p>
+                                </div>
+                            </div>
+                            <div class="ai-message">
+                                <div class="ai-avatar">🤖</div>
+                                <div class="message-content">
+                                    <p>Return to vendor: Amoxicillin batch expiring today</p>
+                                </div>
+                            </div>
+                            <div class="ai-message">
+                                <div class="ai-avatar">🤖</div>
+                                <div class="message-content">
+                                    <p>Ibuprofen stock levels optimal - no action needed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Right AI Panel -->
+        <aside class="ai-panel">
+            <div class="panel-header">
+                <h3>AI Assistant</h3>
+                <div class="status-indicator online"></div>
+            </div>
+            <div class="ai-suggestions">
+                <div class="suggestion-item urgent">
+                    <div class="suggestion-icon">🚨</div>
+                    <div class="suggestion-text">
+                        <strong>Urgent:</strong> 3 items expire today
+                    </div>
+                </div>
+                <div class="suggestion-item warning">
+                    <div class="suggestion-icon">💡</div>
+                    <div class="suggestion-text">
+                        Start flash sale for 8 items
+                    </div>
+                </div>
+                <div class="suggestion-item info">
+                    <div class="suggestion-icon">📊</div>
+                    <div class="suggestion-text">
+                        Monthly loss reduced by 23%
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Add Medicine Modal -->
+    <div class="modal-overlay" id="addMedicineModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Add New Medicine</h3>
+                <button class="close-btn" onclick="closeAddMedicineModal()">×</button>
+            </div>
+            <form id="addMedicineForm">
+                <div class="form-group">
+                    <label>Medicine Name</label>
+                    <input type="text" id="medicineName" required>
+                </div>
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number" id="medicineQuantity" required>
+                </div>
+                <div class="form-group">
+                    <label>Unit Price (₹)</label>
+                    <input type="number" id="medicinePrice" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="medicineExpiry" required>
+                </div>
+                <button type="submit" class="submit-btn">Add Medicine</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

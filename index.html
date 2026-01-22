@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManageMed - Smart Pharmacy Expiry Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-container">
+        <div class="gradient-orb orb1"></div>
+        <div class="gradient-orb orb2"></div>
+        <div class="gradient-orb orb3"></div>
+        <div class="grid-pattern"></div>
+    </div>
+
+    <!-- Landing Page -->
+    <div class="landing-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-left">
+                    <div class="brand-section">
+                        <h1 class="brand-title">ManageMed</h1>
+                        <p class="brand-tagline">Smart Pharmacy Solutions for Expiry Management</p>
+                    </div>
+                    
+                    <div class="problem-statement">
+                        <h2>Stop Losing Money to Expired Medicine</h2>
+                        <p>Pharmacies suffer financial losses from expired medication and lose revenue due to stockouts of seasonal drugs because of poor inventory tracking.</p>
+                    </div>
+
+                    <div class="cta-section">
+                        <button class="cta-button" onclick="window.location.href='login.html'">
+                            <span>Get Started</span>
+                            <div class="button-glow"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="hero-right">
+                    <div class="hero-card">
+                        <div class="pulse-bg"></div>
+                        <div class="card-content">
+                            <div class="medicine-icon">💊</div>
+                            <div class="chart-icon">📊</div>
+                            <div class="inventory-icon">📦</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="features-container">
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">
+                        <div class="status-indicators">
+                            <div class="indicator red"></div>
+                            <div class="indicator yellow"></div>
+                            <div class="indicator green"></div>
+                        </div>
+                    </div>
+                    <h3>Visual Expiry Alerts</h3>
+                    <p>Color-coded system instantly shows expired (Red), expiring soon (Yellow), and safe (Green) medications.</p>
+                </div>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <div class="calculator-icon">₹</div>
+                    </div>
+                    <h3>Financial Loss Calculator</h3>
+                    <p>Real-time calculation of monetary value from expired stock and potential revenue recovery.</p>
+                </div>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <div class="action-icon">⚡</div>
+                    </div>
+                    <h3>Actionable Insights</h3>
+                    <p>Smart recommendations like "Return to Vendor" or "Start Flash Sale" to minimize losses.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
